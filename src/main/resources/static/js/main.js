@@ -81,8 +81,9 @@ Vue.component('messages-list', {
               '</div>',
     created:async function(){
         let res=await messageApi.get()
-        console.log(res.body);
-        res.body.forEach(message=>{
+        res=await res.json();
+        console.log(res);
+        res.forEach(message=>{
             this.messages.push(message)
         });
     },
