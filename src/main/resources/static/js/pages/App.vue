@@ -10,6 +10,9 @@
 
 <script>
     import MessagesList from "../components/messages/MessageList.vue";
+    import {addHandler} from "../util/ws";
+    import {indexOf} from "../util/util";
+
     export default {
         components:{
             MessagesList
@@ -19,6 +22,17 @@
                 messages: frontendData.messages,
                 profile: frontendData.profile
             }
+        },
+        created() {
+            addHandler(data=>{
+                let index=indexOf(this.messages,data);
+                if(index>-1){
+                    this.messages.splice(index,1,data)
+                }
+                else{
+                    this.messages.push(data);
+                }
+            })
         }
     }
 </script>

@@ -6,6 +6,7 @@
 </template>
 
 <script>
+    import {sendMessage} from "../../util/ws";
     export default {
         name: "MessageForm",
         data() {
@@ -22,32 +23,28 @@
             }
         },
         methods:{
-            indexOf(arr,el){
-                for(let i=0;i<arr.length;i++){
-                    if(arr[i].id===el.id)
-                        return i
-                }
-                return -1;
-            },
             async submit(){
-                let message={
-                    text:this.text
-                }
-                if(this.id!==''){
-                    console.log(this.id)
-                    message.id=this.id;
-                    let index=this.indexOf(this.messages,message)
-                    let res=await this.$resource('/message{/id}').update({id:this.id},message)
-                    res = await res.json();
-                    console.log(index)
-                    this.messages.splice(index,1,res);
-                    this.text = "";
-                }else {
-                    let res = await this.$resource('/message{/id}').save({}, message);
-                    res = await res.json();
-                    this.messages.push(res);
-                    this.text = "";
-                }
+                sendMessage({id:this.id,text:this.text})
+                this.text='';
+                this.id='';
+                // let message={
+                //     text:this.text
+                // }
+                // if(this.id!==''){
+                //     console.log(this.id)
+                //     message.id=this.id;
+                //     let index=this.indexOf(this.messages,message)
+                //     let res=await this.$resource('/message{/id}').update({id:this.id},message)
+                //     res = await res.json();
+                //     console.log(index)
+                //     this.messages.splice(index,1,res);
+                //     this.text = "";
+                // }else {
+                //     let res = await this.$resource('/message{/id}').save({}, message);
+                //     res = await res.json();
+                //     this.messages.push(res);
+                //     this.text = "";
+                // }
             }
         }
     }

@@ -7,6 +7,8 @@ import com.trelloiii.sarafan.exceptions.NotFoundException;
 import com.trelloiii.sarafan.repository.MessageRepository;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.messaging.handler.annotation.MessageMapping;
+import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
@@ -44,6 +46,12 @@ public class MessageController {
     @DeleteMapping("{id}")
     public void deleteMessage(@PathVariable Long id){
         messageRepository.delete(getMessage(id));
+    }
+
+    @MessageMapping("/hello")
+    @SendTo("/topic/activity")
+    public Message change(Message message){
+        return messageRepository.save(message);
     }
 
 }
