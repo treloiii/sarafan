@@ -3,8 +3,11 @@ package com.trelloiii.sarafan.controller;
 import com.fasterxml.jackson.annotation.JsonView;
 import com.trelloiii.sarafan.domain.Message;
 import com.trelloiii.sarafan.domain.Views;
+import com.trelloiii.sarafan.dto.EventType;
+import com.trelloiii.sarafan.dto.ObjectType;
 import com.trelloiii.sarafan.exceptions.NotFoundException;
 import com.trelloiii.sarafan.repository.MessageRepository;
+import com.trelloiii.sarafan.util.WsSender;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.handler.annotation.MessageMapping;
@@ -13,12 +16,19 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.function.BiConsumer;
 
 @RestController
 @RequestMapping("/message")
 public class MessageController {
+    private final MessageRepository messageRepository;
+    private final BiConsumer<EventType,Message> wsSender;
+
     @Autowired
-    private MessageRepository messageRepository;
+    public MessageController(MessageRepository messageRepository, WsSender wsSender) {
+        this.messageRepository = messageRepository;
+        this.wsSender = wsSender.getSender(ObjectType.MESSAGE,Views.IdName.class);
+    }
 
     @GetMapping
     @JsonView(Views.IdName.class)
@@ -34,6 +44,7 @@ public class MessageController {
     public Message newMessage(@RequestBody Message message){
         message.setCreationTime(LocalDateTime.now());
         messageRepository.save(message);
+        wsSender.accept(EventType.CREATE,message);
         return message;
     }
     @PutMapping("{id}")
@@ -41,23 +52,14 @@ public class MessageController {
         System.out.println(message.getText());
         Message messageOld=getMessage(id);
         BeanUtils.copyProperties(message,messageOld,"id");
+        wsSender.accept(EventType.UPDATE,messageOld);
         return messageRepository.save(messageOld);
     }
     @DeleteMapping("{id}")
     public void deleteMessage(@PathVariable Long id){
-        messageRepository.delete(getMessage(id));
-    }
-
-    @MessageMapping("/hello")
-    @SendTo("/topic/activity")
-    public Message change(Message message){
-        return messageRepository.save(message);
-    }
-    @MessageMapping("/delete")
-    @SendTo("/topic/activity")
-    public Long delete(Message message){
+        Message message=getMessage(id);
         messageRepository.delete(message);
-        return message.getId();
+        wsSender.accept(EventType.REMOVE,message);
     }
 
 }

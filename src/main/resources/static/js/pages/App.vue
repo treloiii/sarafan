@@ -20,7 +20,6 @@
 <script>
     import MessagesList from "../components/messages/MessageList.vue";
     import {addHandler} from "../util/ws";
-    import {indexOf} from "../util/util";
 
     export default {
         components:{
@@ -34,16 +33,27 @@
         },
         created() {
             addHandler(data=>{
-                if(typeof data==="number"){
-                    let index=indexOf(this.messages,{id:data});
-                    this.messages.splice(index,1)
-                }else {
-                    let index = indexOf(this.messages, data);
-                    if (index > -1) {
-                        this.messages.splice(index, 1, data)
-                    } else {
-                        this.messages.push(data);
+                if(data.objectType==="MESSAGE") {
+                    let message = data.body;
+                    let index = this.messages.findIndex(item => item.id === message.id);
+                    switch (data.eventType) {
+                        case "UPDATE":
+                        case "CREATE":
+                            if (index>-1) {
+                                this.messages.splice(index, 1, message)
+                            } else {
+                                this.messages.push(message);
+                            }
+                            break;
+                        case "REMOVE":
+                            this.messages.splice(index, 1)
+                            break;
+                        default:
+                            console.error(`UNKNOWN EVENT TYPE: ${data.eventType}`)
                     }
+                }
+                else {
+                    console.error(`UNKNOWN OBJECT TYPE: ${data.objectType}`)
                 }
             })
         }

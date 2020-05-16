@@ -10,7 +10,6 @@ export function connect() {
     stompClient.connect({}, frame=> {
         console.log('Connected: ' + frame);
         stompClient.subscribe('/topic/activity', message=> {
-            // showGreeting(JSON.parse(greeting.body).content);
             handlers.forEach(handler=>handler(JSON.parse(message.body)));
         });
     });

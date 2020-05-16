@@ -7,7 +7,6 @@
                      :key="message.id"
                      :editMessage="editMethod"
                      :deleteMessage="deleteMessage"
-                     :deleteWs="deleteWs"
         />
     </v-layout>
 </template>
@@ -15,7 +14,7 @@
 <script>
     import MessageRow from "./MessageRow.vue";
     import MessageForm from "./MessageForm.vue";
-    import {deleteMessage} from "../../util/ws";
+    import API from "../../api/messages";
 
     export default {
         name: "MessagesList",
@@ -40,20 +39,8 @@
             editMethod(message){
                 this.message=message;
             },
-            indexOf(arr,el){
-                for(let i=0;i<arr.length;i++){
-                    if(arr[i].id===el.id)
-                        return i
-                }
-                return -1;
-            },
             async deleteMessage(message){
-                let res=await this.$resource('/message{/id}').remove({id:message.id});
-                console.log(res)
-                this.messages.splice(this.indexOf(this.messages,message),1)
-            },
-            deleteWs(message){
-                deleteMessage(message)
+                await API.delete(message.id);
             }
         }
     }
