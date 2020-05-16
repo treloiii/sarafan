@@ -6,6 +6,7 @@ const handlers=[];
 export function connect() {
     const socket = new SockJS('/gs-guide-websocket');
     stompClient = Stomp.over(socket);
+    stompClient.debug=()=>{}
     stompClient.connect({}, frame=> {
         console.log('Connected: ' + frame);
         stompClient.subscribe('/topic/activity', message=> {
@@ -27,4 +28,7 @@ export function disconnect() {
 
 export function sendMessage(message) {
     stompClient.send("/app/hello", {}, JSON.stringify(message));
+}
+export function deleteMessage(message) {
+    stompClient.send("/app/delete",{},JSON.stringify(message))
 }

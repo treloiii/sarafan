@@ -1,8 +1,13 @@
 <template>
-    <form @submit.prevent="submit">
-        <input type="text" name="text" placeholder="Message text" v-model="text">
-        <button type="submit">Submit</button>
-    </form>
+    <v-layout>
+        <v-text-field v-model="text"
+                      label="Solo"
+                      solo
+                      dense
+        />
+<!--        <input type="text" name="text" placeholder="Message text" >-->
+        <v-btn class="ml-5" @click="submit">Send</v-btn>
+    </v-layout>
 </template>
 
 <script>

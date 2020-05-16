@@ -53,5 +53,11 @@ public class MessageController {
     public Message change(Message message){
         return messageRepository.save(message);
     }
+    @MessageMapping("/delete")
+    @SendTo("/topic/activity")
+    public Long delete(Message message){
+        messageRepository.delete(message);
+        return message.getId();
+    }
 
 }

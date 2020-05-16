@@ -1,11 +1,20 @@
 <template>
-    <div>
-        <div v-if="!profile">Please authorize via <a href="/login">Google</a></div>
-        <div v-else>
-            <div>Hello {{profile.name}}! &nbsp;<a href="/logout">Logout</a></div>
-            <messages-list  :messages="messages"/>
-        </div>
-    </div>
+    <v-app>
+        <v-app-bar app>
+            <v-toolbar-title>Sarafan</v-toolbar-title>
+            <v-spacer></v-spacer>
+            <div v-if="profile">Hello {{profile.name}}! &nbsp;</div>
+            <v-btn v-if="profile" href="/logout">
+               Logout
+            </v-btn>
+        </v-app-bar>
+        <v-content>
+            <v-container v-if="!profile">Please authorize via <a href="/login">Google</a></v-container>
+            <v-container v-if="profile">
+                <messages-list  :messages="messages"/>
+            </v-container>
+        </v-content>
+    </v-app>
 </template>
 
 <script>
@@ -25,12 +34,16 @@
         },
         created() {
             addHandler(data=>{
-                let index=indexOf(this.messages,data);
-                if(index>-1){
-                    this.messages.splice(index,1,data)
-                }
-                else{
-                    this.messages.push(data);
+                if(typeof data==="number"){
+                    let index=indexOf(this.messages,{id:data});
+                    this.messages.splice(index,1)
+                }else {
+                    let index = indexOf(this.messages, data);
+                    if (index > -1) {
+                        this.messages.splice(index, 1, data)
+                    } else {
+                        this.messages.push(data);
+                    }
                 }
             })
         }
@@ -38,5 +51,4 @@
 </script>
 
 <style>
-
 </style>

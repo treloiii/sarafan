@@ -1,19 +1,22 @@
 <template>
-    <div>
+    <v-layout align-content-space-around justify-start column>
         <message-form :messages="messages" :redMessage="message"/>
-        <message-row v-for="message in messages"
+        <message-row v-for="message in sortedMessages"
                      :message="message"
                      :messages="messages"
                      :key="message.id"
                      :editMessage="editMethod"
                      :deleteMessage="deleteMessage"
+                     :deleteWs="deleteWs"
         />
-    </div>
+    </v-layout>
 </template>
 
 <script>
     import MessageRow from "./MessageRow.vue";
     import MessageForm from "./MessageForm.vue";
+    import {deleteMessage} from "../../util/ws";
+
     export default {
         name: "MessagesList",
         components:{
@@ -26,7 +29,13 @@
             }
         },
         props:['messages'],
-
+        computed:{
+            sortedMessages(){
+                return this.messages.sort((a,b)=>{
+                    return b.id-a.id;
+                })
+            }
+        },
         methods:{
             editMethod(message){
                 this.message=message;
@@ -42,6 +51,9 @@
                 let res=await this.$resource('/message{/id}').remove({id:message.id});
                 console.log(res)
                 this.messages.splice(this.indexOf(this.messages,message),1)
+            },
+            deleteWs(message){
+                deleteMessage(message)
             }
         }
     }
