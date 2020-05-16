@@ -6,6 +6,7 @@ import {connect} from './util/ws'
 import Vuetify from "vuetify";
 import 'vuetify/dist/vuetify.min.css'
 import store from 'store/store'
+import router from "./router/router";
 
 if(frontendData.profile)
     connect()
@@ -14,6 +15,7 @@ Vue.use(Vuetify)
 new Vue({
     el:"#app",
     store,
+    router,
     vuetify:new Vuetify(),
     render: a=>a(App)
 })
