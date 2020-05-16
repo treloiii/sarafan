@@ -5,6 +5,7 @@ import "regenerator-runtime/runtime";
 import {connect} from './util/ws'
 import Vuetify from "vuetify";
 import 'vuetify/dist/vuetify.min.css'
+import store from 'store/store'
 
 if(frontendData.profile)
     connect()
@@ -12,6 +13,7 @@ if(frontendData.profile)
 Vue.use(Vuetify)
 new Vue({
     el:"#app",
+    store,
     vuetify:new Vuetify(),
     render: a=>a(App)
 })

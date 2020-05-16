@@ -5,13 +5,12 @@
                       solo
                       dense
         />
-<!--        <input type="text" name="text" placeholder="Message text" >-->
         <v-btn class="ml-5" @click="submit">Send</v-btn>
     </v-layout>
 </template>
 
 <script>
-    import API from "../../api/messages";
+    import {mapActions} from "vuex";
     export default {
         name: "MessageForm",
         data() {
@@ -20,7 +19,7 @@
                 id:''
             }
         },
-        props:['messages','redMessage'],
+        props:['redMessage'],
         watch:{
             redMessage(newVal,oldVal){
                 this.text=newVal.text;
@@ -28,12 +27,13 @@
             }
         },
         methods:{
+            ...mapActions(["updateMessageAction","addMessageAction"]),
             async submit(){
                 const message={id:this.id,text:this.text}
                 if(this.id!==''){
-                    API.update(message);
+                    this.updateMessageAction(message);
                 }else {
-                    API.add(message)
+                    this.addMessageAction(message)
                 }
                 this.text='';
                 this.id='';

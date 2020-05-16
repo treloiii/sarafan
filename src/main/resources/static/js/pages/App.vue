@@ -11,7 +11,7 @@
         <v-content>
             <v-container v-if="!profile">Please authorize via <a href="/login">Google</a></v-container>
             <v-container v-if="profile">
-                <messages-list  :messages="messages"/>
+                <messages-list/>
             </v-container>
         </v-content>
     </v-app>
@@ -20,33 +20,27 @@
 <script>
     import MessagesList from "../components/messages/MessageList.vue";
     import {addHandler} from "../util/ws";
+    import {mapState,mapMutations} from "vuex";
 
     export default {
         components:{
             MessagesList
         },
-        data(){
-            return {
-                messages: frontendData.messages,
-                profile: frontendData.profile
-            }
-        },
+        computed:mapState(["profile"]),
+        methods:mapMutations(["addMessageMutation","updateMessageMutation","removeMessageMutation"]),
         created() {
             addHandler(data=>{
                 if(data.objectType==="MESSAGE") {
                     let message = data.body;
-                    let index = this.messages.findIndex(item => item.id === message.id);
                     switch (data.eventType) {
                         case "UPDATE":
+                            this.updateMessageMutation(message);
+                            break;
                         case "CREATE":
-                            if (index>-1) {
-                                this.messages.splice(index, 1, message)
-                            } else {
-                                this.messages.push(message);
-                            }
+                            this.addMessageMutation(message);
                             break;
                         case "REMOVE":
-                            this.messages.splice(index, 1)
+                            this.removeMessageMutation(message);
                             break;
                         default:
                             console.error(`UNKNOWN EVENT TYPE: ${data.eventType}`)

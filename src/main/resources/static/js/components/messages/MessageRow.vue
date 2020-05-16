@@ -12,15 +12,17 @@
 </template>
 
 <script>
+    import {mapActions} from 'vuex';
     export default {
         name: "MessageRow",
-        props:['message','editMessage','deleteMessage','messages'],
+        props:['message','editMessage'],
         methods:{
-            edit:function(){
+            ...mapActions(["removeMessageAction"]),
+            edit(){
                 this.editMessage(this.message);
             },
             async remove() {
-                this.deleteMessage(this.message);
+                this.removeMessageAction(this.message)
             }
         }
     }
