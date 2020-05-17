@@ -38,6 +38,7 @@
             addHandler(data=>{
                 if(data.objectType==="MESSAGE") {
                     let message = data.body;
+                    console.log(message)
                     switch (data.eventType) {
                         case "UPDATE":
                             this.updateMessageMutation(message);
