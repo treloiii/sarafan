@@ -11,9 +11,13 @@ import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
 import com.trelloiii.sarafan.domain.Message;
 import com.trelloiii.sarafan.domain.User;
 import com.trelloiii.sarafan.domain.Views;
+import com.trelloiii.sarafan.dto.MessagePageDto;
 import com.trelloiii.sarafan.repository.MessageRepository;
+import com.trelloiii.sarafan.service.MessageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
@@ -30,13 +34,13 @@ import java.util.List;
 @Controller
 @RequestMapping("/")
 public class MainController {
-    private final MessageRepository messageRepository;
+    private final MessageService messageService;
     @Value("${spring.profiles.active}")
     private String profile;
     private final ObjectWriter writer;
 
-    public MainController(MessageRepository messageRepository, ObjectMapper mapper) {
-        this.messageRepository = messageRepository;
+    public MainController(MessageService messageRepository, ObjectMapper mapper) {
+        this.messageService = messageRepository;
         this.writer = mapper
                 .setConfig(mapper.getSerializationConfig())
                 .writerWithView(Views.FullMessage.class);
@@ -44,17 +48,23 @@ public class MainController {
 
     @GetMapping
     public String main(Model model, @AuthenticationPrincipal User user) throws JsonProcessingException {
-        HashMap<Object,Object> data=new HashMap<>();
-        String messages="null";
-        if (user!=null) {
+        HashMap<Object, Object> data = new HashMap<>();
+        String messages = "null";
+        if (user != null) {
             data.put("profile", user);
-            List<Message> messageList=messageRepository.findAll();
-            messages=writer.writeValueAsString(messageList);
-
+            PageRequest pageRequest = PageRequest.of(
+                    0,
+                    MessageController.MESSAGE_PER_PAGE,
+                    Sort.by(Sort.Direction.DESC, "id")
+            );
+            MessagePageDto messageDto = messageService.findAll(pageRequest);
+            messages = writer.writeValueAsString(messageDto.getMessagesList());
+            data.put("currentPage",messageDto.getCurrentPage());
+            data.put("totalPages",messageDto.getTotalPages());
         }
-        model.addAttribute("messages",messages);
-        model.addAttribute("frontendData",data);
-        model.addAttribute("isDevMode","dev".equals(profile));
+        model.addAttribute("messages", messages);
+        model.addAttribute("frontendData", data);
+        model.addAttribute("isDevMode", "dev".equals(profile));
         return "index";
     }
 }

@@ -8,7 +8,7 @@ Vue.use(Vuex)
 export default new Vuex.Store({
     state: {
         messages,//:frontendData.messages,
-        profile: frontendData.profile
+        ...frontendData
     },
     getters:{
         sortedMessages(state){
@@ -64,6 +64,20 @@ export default new Vuex.Store({
                 ]
             }
         },
+        addMessagesPageMutation(state,messages){
+            const messagesMap=state.messages.concat(messages)
+                .reduce((res,val)=>{
+                   res[val.id]=val;
+                   return res;
+                },{});
+            state.messages=Object.values(messagesMap);
+        },
+        updateTotalPageMutation(state,totalPages){
+            state.totalPages=totalPages;
+        },
+        updateCurrentPageMutation(state,currentPage){
+            state.currentPage=currentPage;
+        }
     },
     actions:{
         async addMessageAction({commit},message){
@@ -80,6 +94,12 @@ export default new Vuex.Store({
             const response=await (await commentAPI.add(comment)).json();
             console.log(response)
             commit('updateCommentMutation',response);
+        },
+        async loadPageAction({commit,state}){
+            const response=await(await messageAPI.page(state.currentPage+1)).json();
+            commit('addMessagesPageMutation',response.messagesList);
+            commit('updateTotalPageMutation',response.totalPages);
+            commit('updateCurrentPageMutation',Math.min(response.currentPage,response.totalPages));
         }
     }
 })
