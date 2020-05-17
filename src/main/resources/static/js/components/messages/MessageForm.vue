@@ -1,9 +1,10 @@
 <template>
     <v-layout>
         <v-text-field v-model="text"
-                      label="Solo"
+                      label="New message"
                       solo
                       dense
+                      @keyup.enter="submit"
         />
         <v-btn class="ml-5" @click="submit">Send</v-btn>
     </v-layout>

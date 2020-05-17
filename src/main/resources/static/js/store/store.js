@@ -1,19 +1,22 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
-import API from "../api/messages";
+import messageAPI from "../api/messages";
+import commentAPI from "../api/comment";
 
 Vue.use(Vuex)
 
 export default new Vuex.Store({
     state: {
-        messages: frontendData.messages,
+        messages,//:frontendData.messages,
         profile: frontendData.profile
     },
     getters:{
         sortedMessages(state){
-            return state.messages.sort((a,b)=>{
+            let sorted= state.messages.sort((a,b)=>{
                 return b.id-a.id;
             })
+            console.log(sorted[1])
+            return sorted;
         }
     },
     mutations: {
@@ -39,18 +42,39 @@ export default new Vuex.Store({
                     ...state.messages.slice(deleteIndex + 1)
                 ]
             }
-        }
+        },
+        updateCommentMutation(state,comment){
+            const messageIndex=state.messages.findIndex(el=>el.id===comment.message.id);
+            let message =state.messages[messageIndex];
+            console.log(message)
+            state.messages=[
+                ...state.messages.slice(0,messageIndex),
+                {
+                    ...message,
+                    comments:[
+                        ...message.comments,
+                        comment
+                    ]
+                },
+                ...state.messages.slice(messageIndex+1)
+            ]
+        },
     },
     actions:{
         async addMessageAction({commit},message){
-            await API.add(message);
+            await messageAPI.add(message);
             //commit("addMessageMutation",result); //state подсавится автоматически
         },
         async updateMessageAction({commit},message){
-            await API.update(message);
+            await messageAPI.update(message);
         },
         async removeMessageAction({commit},message){
-            await API.delete(message.id)
+            await messageAPI.delete(message.id)
+        },
+        async updateCommentAction({commit,state},comment){
+            const response=await (await commentAPI.add(comment)).json();
+            console.log(response)
+            commit('updateCommentMutation',response);
         }
     }
 })

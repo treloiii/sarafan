@@ -2,6 +2,7 @@ package com.trelloiii.sarafan.controller;
 
 import com.fasterxml.jackson.annotation.JsonView;
 import com.trelloiii.sarafan.domain.Message;
+import com.trelloiii.sarafan.domain.User;
 import com.trelloiii.sarafan.domain.Views;
 import com.trelloiii.sarafan.dto.EventType;
 import com.trelloiii.sarafan.dto.MetaDto;
@@ -17,6 +18,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
@@ -55,8 +57,9 @@ public class MessageController {
         return messageRepository.findById(id).orElseThrow(NotFoundException::new);
     }
     @PostMapping
-    public Message newMessage(@RequestBody Message message) throws IOException {
+    public Message newMessage(@RequestBody Message message, @AuthenticationPrincipal User user) throws IOException {
         message.setCreationTime(LocalDateTime.now());
+        message.setAuthor(user );
         fillMetadata(message);
         messageRepository.save(message);
         wsSender.accept(EventType.CREATE,message);

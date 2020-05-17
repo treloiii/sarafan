@@ -5,15 +5,21 @@ import com.fasterxml.jackson.annotation.JsonView;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.List;
+
+import static java.time.format.DateTimeFormatter.*;
 
 @Data
 @Entity
 @Table
 @ToString(of={"id","text"})
 @EqualsAndHashCode(of={"id"})
+@NamedEntityGraph(name = "Message.comments",attributeNodes = @NamedAttributeNode("comments"))
 public class Message {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -23,8 +29,16 @@ public class Message {
     private String text;
     @Column(updatable = false)
     @JsonView(Views.FullMessage.class)
-    @JsonFormat(shape = JsonFormat.Shape.STRING,pattern = "yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(shape = JsonFormat.Shape.STRING,pattern = "yyyy-MM-dd HH:mm")
     private LocalDateTime creationTime;
+
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    @JsonView(Views.FullMessage.class)
+    private User author;
+    @OneToMany(mappedBy = "message",orphanRemoval = true)
+    @JsonView(Views.FullMessage.class)
+    private List<Comment> comments;
 
     @JsonView(Views.FullMessage.class)
     private String link;
