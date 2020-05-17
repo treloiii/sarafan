@@ -17,7 +17,7 @@
         data() {
             return {
                 text:'',
-                id:''
+                id:null
             }
         },
         props:['redMessage'],
@@ -31,7 +31,7 @@
             ...mapActions(["updateMessageAction","addMessageAction"]),
             async submit(){
                 const message={id:this.id,text:this.text}
-                if(this.id!==''){
+                if(this.id!==null){
                     this.updateMessageAction(message);
                 }else {
                     this.addMessageAction(message)

@@ -15,15 +15,15 @@ import java.time.LocalDateTime;
 @Data
 public class User implements Serializable {
     @Id
-    @JsonView(Views.IdName.class)
+    @JsonView(Views.MessageMainInfo.class)
     private String id;
-    @JsonView(Views.IdName.class)
+    @JsonView(Views.UserMainInfo.class)
     private String name;
-    @JsonView(Views.IdName.class)
+    @JsonView(Views.MessageMainInfo.class)
     private String userpic;
-    @JsonView(Views.FullMessage.class)
+    @JsonView(Views.FullUser.class)
     private String email;
-    @JsonView(Views.FullMessage.class)
+    @JsonView(Views.FullUser.class)
     private String locale;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING,pattern = "yyyy-MM-dd HH:mm:ss")

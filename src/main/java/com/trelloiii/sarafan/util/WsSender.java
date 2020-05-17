@@ -24,7 +24,8 @@ public class WsSender {
     public <T> BiConsumer<EventType,T> getSender(ObjectType objectType, Class<?> view){
         ObjectWriter writer=mapper
                 .setConfig(mapper.getSerializationConfig())
-                .writerWithView(view);
+                .writer();
+                //.writerWithView(view);
         return (EventType type,T payload)->{
           String value =null;
           try {

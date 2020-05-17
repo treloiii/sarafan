@@ -47,7 +47,7 @@ public class MessageController {
     }
 
     @GetMapping
-    @JsonView(Views.IdName.class)
+    @JsonView(Views.MessageMainInfo.class)
     public List<Message> list(){
         return messageRepository.findAll();
     }
@@ -69,7 +69,8 @@ public class MessageController {
     public Message redactMessage(@PathVariable Long id,@RequestBody Message message) throws IOException {
         System.out.println(message.getText());
         Message messageOld=getMessage(id);
-        BeanUtils.copyProperties(message,messageOld,"id");
+        messageOld.setText(message.getText());
+//      BeanUtils.copyProperties(message,messageOld,"id");
         fillMetadata(messageOld);
         wsSender.accept(EventType.UPDATE,messageOld);
         return messageRepository.save(messageOld);

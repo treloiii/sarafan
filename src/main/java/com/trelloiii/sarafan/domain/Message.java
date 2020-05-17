@@ -1,7 +1,6 @@
 package com.trelloiii.sarafan.domain;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.annotation.JsonView;
+import com.fasterxml.jackson.annotation.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
@@ -20,12 +19,16 @@ import static java.time.format.DateTimeFormatter.*;
 @ToString(of={"id","text"})
 @EqualsAndHashCode(of={"id"})
 @NamedEntityGraph(name = "Message.comments",attributeNodes = @NamedAttributeNode("comments"))
+@JsonIdentityInfo(
+        property = "id",
+        generator = ObjectIdGenerators.PropertyGenerator.class
+)
 public class Message {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @JsonView(Views.IdName.class)
+    @JsonView(Views.MessageMainInfo.class)
     private Long id;
-    @JsonView(Views.IdName.class)
+    @JsonView(Views.MessageMainInfo.class)
     private String text;
     @Column(updatable = false)
     @JsonView(Views.FullMessage.class)
@@ -34,19 +37,19 @@ public class Message {
 
     @ManyToOne
     @JoinColumn(name = "user_id")
-    @JsonView(Views.FullMessage.class)
+    @JsonView(Views.MessageMainInfo.class)
     private User author;
     @OneToMany(mappedBy = "message",orphanRemoval = true)
     @JsonView(Views.FullMessage.class)
     private List<Comment> comments;
 
-    @JsonView(Views.FullMessage.class)
+    @JsonView(Views.MessageMainInfo.class)
     private String link;
-    @JsonView(Views.FullMessage.class)
+    @JsonView(Views.MessageMainInfo.class)
     private String linkTitle;
-    @JsonView(Views.FullMessage.class)
+    @JsonView(Views.MessageMainInfo.class)
     private String linkDescription;
-    @JsonView(Views.FullMessage.class)
+    @JsonView(Views.MessageMainInfo.class)
     private String linkCover;
 
 

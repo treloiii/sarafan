@@ -18,7 +18,7 @@ public class CommentController {
     private CommentService commentService;
 
     @PostMapping
-    @JsonView(Views.IdName.class)
+    @JsonView(Views.FullComment.class)
     public Comment add(@RequestBody Comment comment, @AuthenticationPrincipal User user){
         return commentService.create(comment,user);
     }

@@ -26,7 +26,12 @@
     export default {
         computed:mapState(["profile"]),
         methods:{
-            ...mapMutations(["addMessageMutation","updateMessageMutation","removeMessageMutation"]),
+            ...mapMutations([
+                "addMessageMutation",
+                "updateMessageMutation",
+                "removeMessageMutation",
+                "updateCommentMutation"
+            ]),
             toMessages(){
                 this.$router.push("/")
             },
@@ -48,6 +53,16 @@
                             break;
                         case "REMOVE":
                             this.removeMessageMutation(message);
+                            break;
+                        default:
+                            console.error(`UNKNOWN EVENT TYPE: ${data.eventType}`)
+                    }
+                } else if(data.objectType==="COMMENT") {
+                    let comment = data.body;
+                    console.log(comment)
+                    switch (data.eventType) {
+                        case "CREATE":
+                            this.updateCommentMutation(comment);
                             break;
                         default:
                             console.error(`UNKNOWN EVENT TYPE: ${data.eventType}`)
