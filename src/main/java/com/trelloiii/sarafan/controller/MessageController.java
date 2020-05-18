@@ -47,9 +47,9 @@ public class MessageController {
 
     @PostMapping
     public Message newMessage(@RequestBody Message message, @AuthenticationPrincipal User user) throws IOException {
-        messageService.save(user, message);
-        wsSender.accept(EventType.CREATE, message);
-        return message;
+        Message saved=messageService.save(user, message);
+        wsSender.accept(EventType.CREATE, saved);
+        return saved;
     }
 
     @PutMapping("{id}")

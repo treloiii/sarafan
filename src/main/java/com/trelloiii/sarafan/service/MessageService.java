@@ -49,10 +49,11 @@ public class MessageService {
         );
     }
 
-    public void save(User user, Message message) throws IOException {
+    public Message save(User user, Message message) throws IOException {
         message.setCreationTime(LocalDateTime.now());
         message.setAuthor(user);
         fillMetadata(message);
+        return messageRepository.save(message);
     }
 
     private void fillMetadata(Message message) throws IOException {

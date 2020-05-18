@@ -47,7 +47,7 @@ export default new Vuex.Store({
             const messageIndex=state.messages.findIndex(el=>el.id===comment.message.id);
             let message =state.messages[messageIndex];
             console.log(message)
-            if(!message.comments){
+            if(!message['comments']){
                 message.comments=[];
             }
             if(!message.comments.find(val=>val.id===comment.id)) {
@@ -81,6 +81,7 @@ export default new Vuex.Store({
     },
     actions:{
         async addMessageAction({commit},message){
+            console.log('!!')
             await messageAPI.add(message);
             //commit("addMessageMutation",result); //state подсавится автоматически
         },
