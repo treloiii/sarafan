@@ -6,7 +6,7 @@
                 Messages List
             </v-btn>
             <v-spacer></v-spacer>
-            <v-btn @click="toProfile" v-if="profile" :disabled="$route.path==='/profile'" text>
+            <v-btn @click="toProfile" v-if="profile" :disabled="$route.path==='/user'" text>
                 Hello {{profile.name}}! &nbsp;
             </v-btn>
             <v-btn v-if="profile" href="/logout">
@@ -36,7 +36,7 @@
                 this.$router.push("/")
             },
             toProfile(){
-                this.$router.push("/profile")
+                this.$router.push("/user")
             }
         },
         created() {

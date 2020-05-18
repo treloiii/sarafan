@@ -26,9 +26,9 @@ import static java.time.format.DateTimeFormatter.*;
 public class Message {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @JsonView(Views.MessageMainInfo.class)
+    @JsonView(Views.IdName.class)
     private Long id;
-    @JsonView(Views.MessageMainInfo.class)
+    @JsonView(Views.IdName.class)
     private String text;
     @Column(updatable = false)
     @JsonView(Views.FullMessage.class)
@@ -37,19 +37,19 @@ public class Message {
 
     @ManyToOne
     @JoinColumn(name = "user_id")
-    @JsonView(Views.MessageMainInfo.class)
+    @JsonView(Views.IdName.class)
     private User author;
     @OneToMany(mappedBy = "message",orphanRemoval = true)
     @JsonView(Views.FullMessage.class)
     private List<Comment> comments;
 
-    @JsonView(Views.MessageMainInfo.class)
+    @JsonView(Views.IdName.class)
     private String link;
-    @JsonView(Views.MessageMainInfo.class)
+    @JsonView(Views.IdName.class)
     private String linkTitle;
-    @JsonView(Views.MessageMainInfo.class)
+    @JsonView(Views.IdName.class)
     private String linkDescription;
-    @JsonView(Views.MessageMainInfo.class)
+    @JsonView(Views.IdName.class)
     private String linkCover;
 
 

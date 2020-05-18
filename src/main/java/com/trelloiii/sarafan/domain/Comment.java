@@ -12,9 +12,9 @@ import javax.persistence.*;
 public class Comment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @JsonView(Views.MessageMainInfo.class)
+    @JsonView(Views.IdName.class)
     private Long id;
-    @JsonView(Views.MessageMainInfo.class)
+    @JsonView(Views.IdName.class)
     private String text;
     @ManyToOne
     @JoinColumn(name = "message_id")
@@ -23,6 +23,6 @@ public class Comment {
 
     @ManyToOne
     @JoinColumn(name="user_id",nullable = false,updatable = false)
-    @JsonView(Views.MessageMainInfo.class)
+    @JsonView(Views.IdName.class)
     private User user;
 }

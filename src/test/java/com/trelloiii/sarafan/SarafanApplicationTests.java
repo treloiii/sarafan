@@ -21,11 +21,21 @@ import org.springframework.test.context.junit4.SpringRunner;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Stream;
 
 @SpringBootTest
 @RunWith(SpringRunner.class)
 @Log
 class SarafanApplicationTests {
+    @Autowired
+    UserRepository userRepository;
 
+    @Test
+    public void testManyToManyFetch(){
+        User user=userRepository.findById("105154108429299533482").get();
+        Set<User> subscribers=user.getSubscribers();
+        Set<User> subscriptions=user.getSubscriptions();
+        System.out.println(subscribers);
+    }
 }

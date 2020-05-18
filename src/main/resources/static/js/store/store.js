@@ -8,6 +8,7 @@ Vue.use(Vuex)
 export default new Vuex.Store({
     state: {
         messages,//:frontendData.messages,
+        profile,
         ...frontendData
     },
     getters:{
@@ -17,6 +18,9 @@ export default new Vuex.Store({
             })
             console.log(sorted[1])
             return sorted;
+        },
+        myId(state){
+            return state.profile.id;
         }
     },
     mutations: {

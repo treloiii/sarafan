@@ -2,12 +2,7 @@
     <v-card class="mb-5">
         <v-card-title>
             <v-list-item two-line>
-                <v-list-item-avatar color="indigo" v-if="message.author&&message.author.userpic" size="36px">
-                    <v-img :src="message.author.userpic"/>
-                </v-list-item-avatar>
-                <v-list-item-avatar color="indigo" v-else size="36px">
-                    <v-img src="https://forum.develop-soft.ru/images/avatars/random/default-avatar.svg"/>
-                </v-list-item-avatar>
+                <user-link size="36" :author="message.author"></user-link>
                 <v-list-item-content>
                     <v-list-item-subtitle>{{messageAuthor}}</v-list-item-subtitle>
                     <v-list-item-title>{{message.text}}</v-list-item-title>
@@ -27,9 +22,10 @@
     import {mapActions} from 'vuex';
     import Media from "../media/Media.vue";
     import CommentList from "../comment/CommentList.vue";
+    import UserLink from "../UserLink.vue";
     export default {
         name: "MessageRow",
-        components: {CommentList, Media},
+        components: {UserLink, CommentList, Media},
         props:['message','editMessage'],
         computed:{
             messageAuthor(){
