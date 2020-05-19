@@ -17,7 +17,7 @@ public class ProfileController {
     private ProfileService profileService;
 
     @GetMapping("{id}")
-    @JsonView(Views.FullProfile.class)
+    @JsonView(Views.FullData.class)
     public User get(@PathVariable("id") User user){
         return user;
     }

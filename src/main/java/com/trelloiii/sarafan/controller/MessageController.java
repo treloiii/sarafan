@@ -29,23 +29,26 @@ public class MessageController {
     @Autowired
     public MessageController(MessageService messageService, WsSender wsSender) {
         this.messageService = messageService;
-        this.wsSender = wsSender.getSender(ObjectType.MESSAGE, Views.FullMessage.class);
+        this.wsSender = wsSender.getSender(ObjectType.MESSAGE, Views.IdName.class);
     }
 
     @GetMapping
-    @JsonView(Views.FullMessage.class)
-    public MessagePageDto list(@PageableDefault(size = MESSAGE_PER_PAGE, sort = {"id"}, direction = Sort.Direction.DESC) Pageable pageable) {
-        MessagePageDto messagePageDto=messageService.findAll(pageable);
+    @JsonView(Views.FullData.class)
+    public MessagePageDto list(
+            @AuthenticationPrincipal User user,
+            @PageableDefault(size = MESSAGE_PER_PAGE, sort = {"id"}, direction = Sort.Direction.DESC) Pageable pageable) {
+        MessagePageDto messagePageDto=messageService.findForUser(pageable,user);
         return messagePageDto;
     }
 
     @GetMapping("{id}")
-    @JsonView(Views.FullMessage.class)
+    @JsonView(Views.FullData.class)
     public Message getMessage(@PathVariable Long id) {
         return messageService.getMessage(id);
     }
 
     @PostMapping
+    @JsonView(Views.IdName.class)
     public Message newMessage(@RequestBody Message message, @AuthenticationPrincipal User user) throws IOException {
         Message saved=messageService.save(user, message);
         wsSender.accept(EventType.CREATE, saved);

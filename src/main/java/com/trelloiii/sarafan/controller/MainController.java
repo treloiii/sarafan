@@ -33,8 +33,8 @@ public class MainController {
         this.messageService = messageRepository;
         this.userRepository = userRepository;
         mapper.setConfig(mapper.getSerializationConfig());
-        this.messageWriter = mapper.writerWithView(Views.FullMessage.class);
-        this.profileWriter = mapper.writerWithView(Views.FullProfile.class);
+        this.messageWriter = mapper.writerWithView(Views.FullData.class);
+        this.profileWriter = mapper.writerWithView(Views.FullData.class);
     }
 
     @GetMapping
@@ -51,7 +51,7 @@ public class MainController {
                     MessageController.MESSAGE_PER_PAGE,
                     Sort.by(Sort.Direction.DESC, "id")
             );
-            MessagePageDto messageDto = messageService.findAll(pageRequest);
+            MessagePageDto messageDto = messageService.findForUser(pageRequest,user);
             messages = messageWriter.writeValueAsString(messageDto.getMessagesList());
             data.put("currentPage",messageDto.getCurrentPage());
             data.put("totalPages",messageDto.getTotalPages());

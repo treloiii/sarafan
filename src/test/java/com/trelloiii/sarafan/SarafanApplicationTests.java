@@ -28,14 +28,5 @@ import java.util.stream.Stream;
 @RunWith(SpringRunner.class)
 @Log
 class SarafanApplicationTests {
-    @Autowired
-    UserRepository userRepository;
 
-    @Test
-    public void testManyToManyFetch(){
-        User user=userRepository.findById("105154108429299533482").get();
-        Set<User> subscribers=user.getSubscribers();
-        Set<User> subscriptions=user.getSubscriptions();
-        System.out.println(subscribers);
-    }
 }

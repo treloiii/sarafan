@@ -10,7 +10,7 @@ import java.util.List;
 
 @Data
 @AllArgsConstructor
-@JsonView(Views.FullMessage.class)
+@JsonView(Views.IdName.class)
 public class MessagePageDto {
     private List<Message> messagesList;
     private int currentPage;

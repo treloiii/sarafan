@@ -45,7 +45,7 @@
                 if(!isSubscribed)
                     return "Subscribe";
                 for(let i=0;i<subs.length;i++){
-                    if(subs[i]===this.myId)
+                    if(subs[i].subscriber===this.myId)
                         return "Unsusbscribe";
                 }
                 return "Subscribe";

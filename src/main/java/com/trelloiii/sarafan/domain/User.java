@@ -28,40 +28,27 @@ public class User implements Serializable {
     private String name;
     @JsonView(Views.IdName.class)
     private String userpic;
-    @JsonView(Views.FullProfile.class)
+    @JsonView(Views.FullData.class)
     private String email;
-    @JsonView(Views.FullProfile.class)
+    @JsonView(Views.FullData.class)
     private String locale;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING,pattern = "yyyy-MM-dd HH:mm:ss")
-    @JsonView(Views.FullProfile.class)
+    @JsonView(Views.FullData.class)
     private LocalDateTime lastVisit;
 
-    @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(
-            name = "user_subscribptions",
-            joinColumns = @JoinColumn(name = "subscriber_id"),
-            inverseJoinColumns = @JoinColumn(name = "channel_id")
+    @OneToMany(
+            mappedBy = "subscriber",
+            orphanRemoval = true
     )
-    @JsonIdentityReference
-    @JsonIdentityInfo(
-            property = "id",
-            generator = ObjectIdGenerators.PropertyGenerator.class
-    )
-    @JsonView(Views.FullProfile.class)
-    private Set<User> subscriptions;
+    @JsonView(Views.FullData.class)
+    private Set<UserSubscription> subscriptions;
 
-    @ManyToMany(fetch = FetchType.EAGER)
-    @JsonIdentityReference
-    @JoinTable(
-            name = "user_subscribptions",
-            joinColumns = @JoinColumn(name = "channel_id"),
-            inverseJoinColumns = @JoinColumn(name = "subscriber_id")
+    @OneToMany(
+            mappedBy = "channel",
+            orphanRemoval = true,
+            cascade = CascadeType.ALL
     )
-    @JsonIdentityInfo(
-            property = "id",
-            generator = ObjectIdGenerators.PropertyGenerator.class
-    )
-    @JsonView(Views.FullProfile.class)
-    private Set<User> subscribers;
+    @JsonView(Views.FullData.class)
+    private Set<UserSubscription> subscribers;
 }

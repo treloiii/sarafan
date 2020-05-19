@@ -31,7 +31,7 @@ public class Message {
     @JsonView(Views.IdName.class)
     private String text;
     @Column(updatable = false)
-    @JsonView(Views.FullMessage.class)
+    @JsonView(Views.FullData.class)
     @JsonFormat(shape = JsonFormat.Shape.STRING,pattern = "yyyy-MM-dd HH:mm")
     private LocalDateTime creationTime;
 
@@ -40,7 +40,7 @@ public class Message {
     @JsonView(Views.IdName.class)
     private User author;
     @OneToMany(mappedBy = "message",orphanRemoval = true)
-    @JsonView(Views.FullMessage.class)
+    @JsonView(Views.FullData.class)
     private List<Comment> comments;
 
     @JsonView(Views.IdName.class)

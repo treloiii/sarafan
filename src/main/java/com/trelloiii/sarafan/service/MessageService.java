@@ -2,10 +2,12 @@ package com.trelloiii.sarafan.service;
 
 import com.trelloiii.sarafan.domain.Message;
 import com.trelloiii.sarafan.domain.User;
+import com.trelloiii.sarafan.domain.UserSubscription;
 import com.trelloiii.sarafan.dto.MessagePageDto;
 import com.trelloiii.sarafan.dto.MetaDto;
 import com.trelloiii.sarafan.exceptions.NotFoundException;
 import com.trelloiii.sarafan.repository.MessageRepository;
+import com.trelloiii.sarafan.repository.UserSubscriptionRepository;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -31,17 +33,24 @@ public class MessageService {
     private static Pattern IMG_REGEX = Pattern.compile(IMAGE_PATTERN, Pattern.CASE_INSENSITIVE);
     @Autowired
     private MessageRepository messageRepository;
+    @Autowired
+    private UserSubscriptionRepository userSubscriptionRepository;
 
     public Message getMessage(Long id) {
         return messageRepository.findById(id).orElseThrow(NotFoundException::new);
     }
 
-    public List<Message> findAll() {
+    public List<Message> findForUser() {
         return messageRepository.findAll();
     }
 
-    public MessagePageDto findAll(Pageable pageable) {
-        Page<Message> messagePage = messageRepository.findAll(pageable);
+    public MessagePageDto findForUser(Pageable pageable, User user) {
+        List<User> channels=userSubscriptionRepository.findBySubscriber(user)
+                .stream()
+                .map(UserSubscription::getChannel)
+                .collect(Collectors.toList());
+        channels.add(user);
+        Page<Message> messagePage = messageRepository.findByAuthorIn(channels,pageable);
         return new MessagePageDto(
                 messagePage.getContent(),
                 pageable.getPageNumber(),

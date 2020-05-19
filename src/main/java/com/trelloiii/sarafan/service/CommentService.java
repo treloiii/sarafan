@@ -11,6 +11,7 @@ import com.trelloiii.sarafan.util.WsSender;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.io.NotActiveException;
 import java.util.function.BiConsumer;
 
 @Service
@@ -21,7 +22,11 @@ public class CommentService {
     private final BiConsumer<EventType, Comment> wsSender;
 
     public CommentService(WsSender wsSender) {
-        this.wsSender = wsSender.getSender(ObjectType.COMMENT, Views.FullComment.class);
+        this.wsSender = wsSender.getSender(ObjectType.COMMENT, Views.IdName.class);
+    }
+
+    public Comment getById(Long id) throws NotActiveException {
+        return commentRepository.findById(id).orElseThrow(NotActiveException::new);
     }
 
     public Comment create(Comment comment, User user){
